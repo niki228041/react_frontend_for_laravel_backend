@@ -3,7 +3,10 @@ import { IProductItem,IProductState, ProductActionTypes } from "./types"
 
 
 const initialState: IProductState = {
-    list:[]
+    list:[],
+    current_page:0,
+    total:0,
+    last_page:0
 }
 
 export const productReducer = (state=initialState,action:any): IProductState=>{
@@ -11,10 +14,15 @@ export const productReducer = (state=initialState,action:any): IProductState=>{
         case ProductActionTypes.PRODUCT_LIST:{
             return {
                 ...state,
-                list:[...action.payload]
+                ...action.payload
             }
         }
         case ProductActionTypes.CREATE_NEW_PRODUCT:{
+            return {
+                ...state
+            }
+        }
+        case ProductActionTypes.DELETE_PRODUCT:{
             return {
                 ...state
             }

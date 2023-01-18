@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const http = axios.create({
-    baseURL:"http://laravel.pv016.com",
+    baseURL:"http://laravel.pv016plswork.com/",
     headers:{
         "Content-type":"application/json",
         'Accept':'application/json'
