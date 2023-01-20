@@ -7,7 +7,8 @@ import { IProductItem, IProductSearch } from '../store/types';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useAction } from '../store/action-creators/useActions';
-
+import qs from "qs";
+import { useFormik } from 'formik';
 
 const Products=()=>{
     var {list,total,current_page,last_page} = useTypedSelector(store=>store.productReducer);
@@ -24,12 +25,28 @@ const Products=()=>{
         buttons.push(i);
     }
 
+    function filterNonNull(obj: IProductSearch) {
+        return Object.fromEntries(Object.entries(obj).filter(([k, v]) => v));
+    }
+
+    const onSubmit = (values: IProductSearch) => {
+        const filter = {...values, page:1};
+        setSearchParams(qs.stringify(filterNonNull(filter)));
+        setSearch(filter);
+    }
+
+    const formik = useFormik({
+      initialValues: search,
+      onSubmit: onSubmit,
+    }); 
+    
+    const {handleSubmit, values, handleChange} = formik;
 
     useEffect(()=>{
         console.log("UseEffect Works!");
         console.log(search);
 
-       
+        console.log(qs.stringify(filterNonNull({ ...search})));
         GetProductList(search);
     },[search]);
 
@@ -77,9 +94,16 @@ const Products=()=>{
 
     <h4>All Products <strong>{total}</strong></h4>
 
-    <div style={{display:"flex",flexDirection:"row",alignContent:"center",height:"50px",paddingBottom:"10px"}}>
-        <MDBInput label='Search' id='form1' type='text' onChange={(event:any)=>{setSearch({name:event.target.value})}} />
-    </div>
+    <form onSubmit={handleSubmit} >
+        <div style={{display:"flex",flexDirection:"row",alignContent:"center",height:"70px",alignItems:"center",width:"100%",float:"right",justifyContent:"flex-end"}} >
+            <div style={{width:"200px"}}>
+                <MDBInput label='Search' id='name' name='name' type='text' onChange={handleChange} value={values.name} />
+            </div>
+        <MDBBtn className=" w-25 ms-3" style={{padding:"0px",height:"30px"}} type='submit'>Search</MDBBtn>
+        </div>
+
+    </form>
+    
 
     <MDBTable>
         <MDBTableHead style={{background:"#90a7f0"}}>
